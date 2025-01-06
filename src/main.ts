@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { BaseBatch } from './batch/base-batch';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 async function bootstrap() {
 	const args = process.argv.slice(2);
@@ -10,6 +11,8 @@ async function bootstrap() {
 	if (!batchName) {
 		throw new Error('no batch name');
 	}
+
+	initializeTransactionalContext();
 
 	const appContext = await NestFactory.createApplicationContext(AppModule);
 	const batch = appContext.get<BaseBatch>(batchName);
