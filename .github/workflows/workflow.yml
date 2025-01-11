@@ -5,7 +5,7 @@ on:
     branches: [master]
 
 jobs:
-  aeum-gil-api-deploy:
+  postlude-batch-build:
     runs-on: ubuntu-latest
     steps:
     - name: Source Code Checkout
