@@ -17,7 +17,9 @@ async function bootstrap() {
 	const appContext = await NestFactory.createApplicationContext(AppModule);
 	const batch = appContext.get<BaseBatch>(batchName);
 
+	console.log(`start ${batchName} batch`);
 	await batch.run();
+	console.log(`end ${batchName} batch`);
 
 	await appContext.close();
 }
