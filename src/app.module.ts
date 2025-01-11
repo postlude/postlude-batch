@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { Backup } from './batch/backup/backup.batch';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
+import { S3Util } from 'util/s3.util';
 
 @Module({
 	imports: [
@@ -13,6 +14,7 @@ import { DatabaseModule } from './database/database.module';
 		DatabaseModule
 	],
 	providers: [
+		S3Util,
 		{
 			provide: 'Backup',
 			useClass: Backup
