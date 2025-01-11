@@ -36,7 +36,7 @@ export class Backup extends BaseBatch {
 		for (const database of this.TARGET_DATABASES) {
 			console.log(`start ${database} backup`);
 
-			const result = sync('/opt/homebrew/opt/mysql-client/bin/mysqldump', [
+			const result = sync('mysqldump', [
 				`--defaults-file=${configFilePath}`,
 				'-h', host,
 				'-P', port.toString(),
