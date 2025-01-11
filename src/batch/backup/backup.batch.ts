@@ -5,16 +5,19 @@ import { ConfigService } from '@nestjs/config';
 import { MySqlConfig } from 'src/config/config.model';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
+import { S3Util } from 'util/s3.util';
 
 @Injectable()
 export class Backup extends BaseBatch {
 	constructor(
-		private configService: ConfigService<MySqlConfig>
+		private configService: ConfigService<MySqlConfig>,
+		private readonly s3Util: S3Util
 	) {
 		super();
 	}
 
 	private readonly TARGET_DATABASES = [ 'postlude', 'aeum_gil' ];
+	private readonly S3_BUCKET = 'postlude-backup';
 
 	public async run() {
 		const host = this.configService.get('MYSQL_HOST', { infer: true });
@@ -48,7 +51,17 @@ export class Backup extends BaseBatch {
 				throw new Error(`${database} dump error`);
 			}
 
-			writeFileSync(`./${database}.sql`, result.stdout);
+			if (process.env.NODE_ENV === 'production') {
+				const key = `mysql/${database}.sql`;
+				await this.s3Util.uploadBufferedFile({
+					bucket: this.S3_BUCKET,
+					key,
+					file: result.stdout
+				});
+			} else {
+				const backupFilePath = join(process.cwd(), `/tmp/${database}.sql`);
+				writeFileSync(backupFilePath, result.stdout);
+			}
 
 			console.log(`end ${database} backup`);
 		}
