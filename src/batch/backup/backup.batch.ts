@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { MySqlConfig } from 'src/config/config.model';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { S3Util } from 'util/s3.util';
+import { S3Util } from 'src/util/s3.util';
 
 @Injectable()
 export class Backup extends BaseBatch {
