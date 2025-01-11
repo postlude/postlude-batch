@@ -26,17 +26,15 @@ export class Backup extends BaseBatch {
 			throw new Error('no mysql connection info');
 		}
 
-		const myCnfContent = `[client]\nuser=${user}\npassword=${password}`;
+		console.log(`current working directory: ${process.cwd()}`);
 
-		const filePath = join(process.cwd(), '/src/batch/backup/my.cnf');
-		// 8진수 표기법으로 600 권한
-		writeFileSync(filePath, myCnfContent.trim(), { mode: 0o600 });
+		const configFilePath = this.saveCnfFile(user, password);
 
 		for (const database of this.TARGET_DATABASES) {
 			console.log(`start ${database} backup`);
 
 			const result = sync('/opt/homebrew/opt/mysql-client/bin/mysqldump', [
-				`--defaults-file=${filePath}`,
+				`--defaults-file=${configFilePath}`,
 				'-h', host,
 				'-P', port.toString(),
 				'--no-tablespaces',
@@ -54,5 +52,16 @@ export class Backup extends BaseBatch {
 
 			console.log(`end ${database} backup`);
 		}
+	}
+
+	private saveCnfFile(user: string, password: string) {
+		const myCnfContent = `[client]\nuser=${user}\npassword=${password}`;
+
+		const filePath = join(process.cwd(), '/tmp/my.cnf');
+
+		// 8진수 표기법으로 600 권한
+		writeFileSync(filePath, myCnfContent.trim(), { mode: 0o600 });
+
+		return filePath;
 	}
 }
