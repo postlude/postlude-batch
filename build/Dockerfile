@@ -4,7 +4,7 @@ RUN apt-get update \
     && apt-get install -y default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
-ENV SERVER_HOME /usr/src/postlude-backup
+ENV SERVER_HOME /usr/src/postlude-batch
 
 RUN mkdir -p ${SERVER_HOME}
 
